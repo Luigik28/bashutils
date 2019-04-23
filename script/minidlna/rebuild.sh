@@ -19,6 +19,7 @@ set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
 # set -o xtrace
 
+# IFS stands for "internal field separator". It is used by the shell to determine how to do word splitting, i. e. how to recognize word boundaries.
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
@@ -43,26 +44,28 @@ read -p "$QUEST" -n 1 -r
 echo # move to a new line
 
 if [[ $REPLY =~ ^[Rr]$ ]]; then
-  # Do dangerous stuff
-  INFO "Red Pill, nice choice!"
- 
-  DEBUG "Delete cache MiniDLNA"
-  rm -rf /mnt/dietpi_userdata/.MiniDLNA_Cache/*
-  if [ ! $? -eq 0 ]; then
-    FATAL "Can't delete cache MiniDLNA! Exiting..."
-    exit 1
-  fi
+    # Do dangerous stuff
+    INFO "Red Pill, nice choice!"
 
-  DEBUG "Restart MiniDLNA"
-  systemctl restart minidlna
-  if [ ! $? -eq 0 ]; then
-    FATAL "Can't restart MiniDLNA! Exiting..."
-    exit 1
-  fi
-  INFO "Done!"
-  exit 0
+    DEBUG "Delete cache MiniDLNA"
+    rm -rf /mnt/dietpi_userdata/.MiniDLNA_Cache/*
+    # need to trap previous command !!!!
+    if [ ! $? -eq 0 ]; then
+        FATAL "Can't delete cache MiniDLNA! Exiting..."
+        exit 1
+    fi
+
+    DEBUG "Restart MiniDLNA"
+    systemctl restart minidlna
+    # need to trap previous command !!!!
+    if [ ! $? -eq 0 ]; then
+        FATAL "Can't restart MiniDLNA! Exiting..."
+        exit 1
+    fi
+    INFO "Done!"
+    exit 0
 else
-  INFO "Blue pill, bye bye!"
+    INFO "Blue pill, bye bye!"
 fi
 
 IFS=$SAVEIFS
