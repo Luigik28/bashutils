@@ -35,6 +35,10 @@ LOG_TIME_FMT="+%Y%m%d.%H%M%S"
 log_time=$(date "${LOG_TIME_FMT}")
 top -b -n 1 -H > top.$log_time.log
 
+catalinapid=$(ps -ef | grep tomcat-5.5 | grep java | awk ' { print $2 } ')
+
+kill -3 $catalinapid
+
 # Restore IFS
 IFS=$SAVEIFS
 exit 0
